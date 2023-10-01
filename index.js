@@ -67,9 +67,9 @@ function CreateMatch()
                     allClient[i].send(clientData);
                 }
 
-                setTimeout(function(){ 
-                    EndMatch(result.rows[0].id);
-                }, 30000);
+                // setTimeout(function(){ 
+                //     EndMatch(result.rows[0].id);
+                // }, 30000);
               });
     }
     else
