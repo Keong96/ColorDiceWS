@@ -19,6 +19,8 @@ const wss = new WebSocket.Server({ port:PORT }, () => {
 console.log('server started')
 })
 
+allClient = [];
+
 wss.on('connection', function connection(client){
 
     client.on('close', () => {  
@@ -143,6 +145,28 @@ function SendWinInfo(uid, matchId, winNum, winAmount)
             break;
        }
     }
+}
+
+function SendBetHistory()
+{
+    client.query("SELECT winNum from colordice_matches ORDER BY id DESC LIMIT 100")
+          .then((result) =>
+          {
+            for(var i = 0; i < allClient.length; i++)
+            {
+                if(allClient[i].id == uid)
+                {
+                        var clientData = `{
+                            "type": "BetHistory",
+                            "sender": "Server",
+                            "result": "${result.rows}",
+                        }`;
+                    
+                        allClient[i].send(clientData);
+                        break;
+                }
+            }
+          });
 }
 
 CreateMatch();
