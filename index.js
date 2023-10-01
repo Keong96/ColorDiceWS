@@ -61,8 +61,8 @@ function CreateMatch()
                     var clientData = `{
                         "type": "StartMatch",
                         "sender": "Server",
-                        "matchId": "${result.rows[0].id}",
-                    }`;
+                        "matchId": "${result.rows[0].id}"
+                      }`;
     
                     allClient[i].send(clientData);
                 }
