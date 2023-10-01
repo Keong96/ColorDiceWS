@@ -93,7 +93,7 @@ function EndMatch(matchId)
                         var totalBet = 0;
                         var totalWin = 0;
 
-                        for(var i = 0; i < resul2t.rows.length; i++)
+                        for(var i = 0; i < result2.rows.length; i++)
                         {
                             totalBet += result2.rows[i].amount;
 
@@ -109,7 +109,7 @@ function EndMatch(matchId)
                         {
                             var winAmount = 0;
 
-                            if(resul2t.rows[j].option == winNum)
+                            if(result2.rows[j].option == winNum)
                             {
                                 winAmount = (totalBet / totalWin) * result2.rows[j].amount;
                             }
