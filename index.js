@@ -84,57 +84,82 @@ function CreateMatch()
 
 function EndMatch(matchId)
 {
-    client.query("SELECT option, SUM(amount) AS total_amount from colordice_bet_history WHERE match_id ="+matchId+" GROUP BY option ORDER BY total_amount ASC LIMIT 1")
-        .then((result) =>
-        {
-            winNum = result.rows[0];
+    //decide the wining number
+    client.query("SELECT option, SUM(amount) AS total_amount from colordice_bet_history WHERE match_id ="+matchId+" GROUP BY option ORDER BY total_amount ASC")
+    .then((result) =>
+    {
+        var winNum = -1;
+        var totalBet = 0;
+        var betResult = [];
 
-            client.query("UPDATE colordice_matches SET winNum = "+winNum+" WHERE id ="+matchId)
+        for(i = 0; i < result.rows.length; i++)
+        {
+            totalBet += result.rows[i].total_amount;
+        }
+
+        betResult.sort((a, b) => a - b);
+
+        if(betResult[0] < totalBet / 10)
+        {
+            winNum = 6;
+        }
+        else
+        {
+            winNum = result.rows[0].option;
+        }
+
+        client.query("UPDATE colordice_matches SET winNum = "+winNum+" WHERE id ="+matchId)
+
+        for(var i = 0; i < allClient.length; i++)
+        {
+            var clientData = `{
+                "type": "MatchInfo",
+                "sender": "Server",
+                "matchId": "${matchId}",
+                "winNum": "${winNum}"
+            }`;
+    
+            allClient[i].send(clientData);
+            SendWinAmount(allClient[i].uid);
+        }
+    });
+
+    setTimeout(function(){ 
+        CreateMatch();
+    }, 5000);
+}
+
+function SendWinAmount()
+{
+    var totalBet = 0;
+
+    client.query("SELECT sum(amount) FROM colordice_bet_history WHERE match_id ="+matchId)
+    .then((result) =>
+    {
+        totalBet = result.rows[0];
+
+        client.query("SELECT * FROM colordice_bet_history WHERE match_id ="+matchId+" AND option = "+winNum)
             .then((result2) =>
             {
-                client.query("SELECT * FROM colordice_bet_history WHERE match_id ="+matchId)
-                .then((result3) =>
+                var winAmount = totalBet / result2.rows[i].amount;
+
+                for(var i = 0; i < allClient.length; i++)
                 {
-                    var totalBet = 0;
-                    var totalWin = 0;
-
-                    for(var i = 0; i < result3.rows.length; i++)
+                    if(allClient[i].id == uid)
                     {
-                        totalBet += result3.rows[i].amount;
-
-                        if(result2.rows[i].option == winNum)
-                        {
-                            totalWin += result3.rows[i].amount;
-                        }
-                    }
-
-                    client.query("UPDATE colordice_matches SET total_in = "+parseInt(totalBet)+", total_out = "+parseInt(totalWin)+" WHERE id ="+matchId)
-
-                    client.query("SELECT * FROM colordice_bet_history WHERE uid ="+allClient[i].uid)
-                    .then((result4) =>
-                    {
-                        if(result4.rows[0].option == winNum)
-                        {
-                            winAmount = (totalBet / totalWin) * result2.rows[0].amount;
-                        }
-
                         var clientData = `{
-                            "type": "WinInfo",
+                            "type": "WinAmount",
                             "sender": "Server",
                             "matchId": "${matchId}",
-                            "winNum": "${winNum}",
                             "winAmount": "${winAmount}"
                         }`;
-
+                
                         allClient[i].send(clientData);
-                    });
-                });
+                        break;
+                    }
+                }
             });
-        });
-
-        setTimeout(function(){ 
-            CreateMatch();
-        }, 5000);
+    });
 }
 
 function SendRoadMap()
