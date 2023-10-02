@@ -98,6 +98,8 @@ function EndMatch(matchId)
         }
 
         betResult.sort((a, b) => a - b);
+        Console.log("totalBet = "+totalBet);
+        console.log("result.rows[0] = "+JSON.stringify(result.rows[0]));
 
         if(betResult[0] < totalBet / 10)
         {
@@ -124,11 +126,11 @@ function EndMatch(matchId)
         }
 
         console.log("EndMatch");
-    });
 
-    setTimeout(function(){ 
-        CreateMatch();
-    }, 5000);
+        setTimeout(function(){ 
+            CreateMatch();
+        }, 5000);
+    });
 }
 
 function SendWinAmount()
