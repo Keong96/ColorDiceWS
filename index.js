@@ -84,53 +84,53 @@ function CreateMatch()
 
 function EndMatch(matchId)
 {
-    // client.query("SELECT option, SUM(amount) AS total_amount from colordice_bet_history WHERE match_id ="+matchId+" GROUP BY option ORDER BY total_amount ASC LIMIT 1")
-    //     .then((result) =>
-    //     {
-    //         winNum = result.rows[0];
+    client.query("SELECT option, SUM(amount) AS total_amount from colordice_bet_history WHERE match_id ="+matchId+" GROUP BY option ORDER BY total_amount ASC LIMIT 1")
+        .then((result) =>
+        {
+            winNum = result.rows[0];
 
-    //         client.query("UPDATE colordice_matches SET winNum = "+winNum+" WHERE id ="+matchId)
-    //         .then((result2) =>
-    //         {
-    //             client.query("SELECT * FROM colordice_bet_history WHERE match_id ="+matchId)
-    //             .then((result3) =>
-    //             {
-    //                 var totalBet = 0;
-    //                 var totalWin = 0;
+            client.query("UPDATE colordice_matches SET winNum = "+winNum+" WHERE id ="+matchId)
+            .then((result2) =>
+            {
+                client.query("SELECT * FROM colordice_bet_history WHERE match_id ="+matchId)
+                .then((result3) =>
+                {
+                    var totalBet = 0;
+                    var totalWin = 0;
 
-    //                 for(var i = 0; i < result3.rows.length; i++)
-    //                 {
-    //                     totalBet += result3.rows[i].amount;
+                    for(var i = 0; i < result3.rows.length; i++)
+                    {
+                        totalBet += result3.rows[i].amount;
 
-    //                     if(result2.rows[i].option == winNum)
-    //                     {
-    //                         totalWin += result3.rows[i].amount;
-    //                     }
-    //                 }
+                        if(result2.rows[i].option == winNum)
+                        {
+                            totalWin += result3.rows[i].amount;
+                        }
+                    }
 
-    //                 client.query("UPDATE colordice_matches SET total_in = "+parseInt(totalBet)+", total_out = "+parseInt(totalWin)+" WHERE id ="+matchId)
+                    client.query("UPDATE colordice_matches SET total_in = "+parseInt(totalBet)+", total_out = "+parseInt(totalWin)+" WHERE id ="+matchId)
 
-    //                 client.query("SELECT * FROM colordice_bet_history WHERE uid ="+allClient[i].uid)
-    //                 .then((result4) =>
-    //                 {
-    //                     if(result4.rows[0].option == winNum)
-    //                     {
-    //                         winAmount = (totalBet / totalWin) * result2.rows[0].amount;
-    //                     }
+                    client.query("SELECT * FROM colordice_bet_history WHERE uid ="+allClient[i].uid)
+                    .then((result4) =>
+                    {
+                        if(result4.rows[0].option == winNum)
+                        {
+                            winAmount = (totalBet / totalWin) * result2.rows[0].amount;
+                        }
 
-    //                     var clientData = `{
-    //                         "type": "WinInfo",
-    //                         "sender": "Server",
-    //                         "matchId": "${matchId}",
-    //                         "winNum": "${winNum}",
-    //                         "winAmount": "${winAmount}"
-    //                     }`;
+                        var clientData = `{
+                            "type": "WinInfo",
+                            "sender": "Server",
+                            "matchId": "${matchId}",
+                            "winNum": "${winNum}",
+                            "winAmount": "${winAmount}"
+                        }`;
 
-    //                     allClient[i].send(clientData);
-    //                 });
-    //             });
-    //         });
-    //     });
+                        allClient[i].send(clientData);
+                    });
+                });
+            });
+        });
 
         setTimeout(function(){ 
             CreateMatch();
