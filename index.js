@@ -122,6 +122,8 @@ function EndMatch(matchId)
             allClient[i].send(clientData);
             SendWinAmount(allClient[i].uid);
         }
+
+        console.log("EndMatch");
     });
 
     setTimeout(function(){ 
@@ -160,6 +162,8 @@ function SendWinAmount()
                 }
             });
     });
+
+    console.log("SendWinAmount");
 }
 
 function SendRoadMap()
@@ -197,10 +201,5 @@ function PlayerLogin(client, uid)
 
 function PlayerBet(sender, matchId, amount, option)
 {
-  console.log("sender = "+sender);
-  console.log("matchId = "+matchId);
-  console.log("amount = "+amount);
-  console.log("option = "+option);
-
   client.query("INSERT INTO colordice_bet_history (uid, match_id, amount, option) VALUES ("+sender+", "+matchId+", "+amount+", "+option+")");
 }
