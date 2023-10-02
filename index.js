@@ -71,7 +71,7 @@ function CreateMatch()
 
                 setTimeout(function(){ 
                     EndMatch(result.rows[0].id);
-                }, 35000);
+                }, 30000);
               });
     }
     else
@@ -149,7 +149,7 @@ function SendWinInfo(uid, matchId, winNum, winAmount)
     }
 }
 
-function SendBetHistory()
+function SendRoadMap()
 {
     client.query("SELECT winNum from colordice_matches ORDER BY id DESC LIMIT 100")
           .then((result) =>
@@ -159,7 +159,7 @@ function SendBetHistory()
                 if(allClient[i].id == uid)
                 {
                         var clientData = `{
-                            "type": "BetHistory",
+                            "type": "RoadMap",
                             "sender": "Server",
                             "result": "${result.rows}",
                         }`;
@@ -180,7 +180,6 @@ function PlayerLogin(client, uid)
   client.id = uid;
 
   allClient.push(client);
-  console.log("Player Joined, ID:"+uid);
 }
 
 function PlayerBet(sender, matchId, amount, option)
