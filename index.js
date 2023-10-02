@@ -85,7 +85,7 @@ function CreateMatch()
 function EndMatch(matchId)
 {
     //decide the wining number
-    client.query("SELECT option, SUM(amount) AS total_amount from colordice_bet_history WHERE match_id ="+matchId+" GROUP BY option ORDER BY total_amount ASC")
+    client.query("SELECT option AS option, SUM(amount) AS total_amount from colordice_bet_history WHERE match_id ="+matchId+" GROUP BY option ORDER BY total_amount ASC")
     .then((result) =>
     {
         var winNum = -1;
