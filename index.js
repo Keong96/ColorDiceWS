@@ -172,5 +172,5 @@ function PlayerLogin(client, uid)
 
 function PlayerBet(sender, matchId, amount, option)
 {
-  client.query("INSERT INTO colordice_bet_history (uid, match_id, amount, option) VALUES ("+sender+", "+matchId+", "+amount+", "+option+")");
+  client.query("INSERT INTO colordice_bet_history (uid, match_id, amount, option) VALUES ('"+sender+"', '"+matchId+"', '"+amount+"', '"+option+"')");
 }
