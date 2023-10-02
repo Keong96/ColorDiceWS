@@ -84,7 +84,7 @@ function CreateMatch()
 
 function EndMatch(matchId)
 {
-    client.query("SELECT option, SUM(amount) AS total_amount from colordice_bet_history WHERE id ="+matchId+" GROUP BY option ORDER BY total_amount ASC LIMIT 1")
+    client.query("SELECT option, SUM(amount) AS total_amount from colordice_bet_history WHERE match_id ="+matchId+" GROUP BY option ORDER BY total_amount ASC LIMIT 1")
         .then((result) =>
         {
             winNum = result.rows[0];
