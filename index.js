@@ -132,8 +132,8 @@ function EndMatch(matchId)
             });
 
             setTimeout(function(){ 
-                EndMatch(result.rows[0].id);
-            }, 30000);
+                CreateMatch();
+            }, 5000);
         });
 }
 
