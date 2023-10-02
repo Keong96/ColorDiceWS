@@ -36,7 +36,9 @@ wss.on('connection', function connection(client){
   
     client.on('message', (data) => {
       var dataJSON = JSON.parse(data);
-  
+      
+      console.log("dataJSON = "+JSON.stringify(dataJSON));
+
       switch(dataJSON.type)
       {
         case "PlayerLogin":
