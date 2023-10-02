@@ -105,7 +105,7 @@ function EndMatch(matchId)
                             }
                         }
 
-                        client.query("UPDATE colordice_matches SET totalBet = "+parseInt(totalBet)+", totalWin = "+parseInt(totalWin)+" WHERE id ="+matchId)
+                        client.query("UPDATE colordice_matches SET total_in = "+parseInt(totalBet)+", total_out = "+parseInt(totalWin)+" WHERE id ="+matchId)
 
                         for(var j = 0; j < result2.rows.length; j++)
                         {
