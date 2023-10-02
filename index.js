@@ -84,69 +84,57 @@ function CreateMatch()
 
 function EndMatch(matchId)
 {
-    var winNum = Math.floor(Math.random() * 6);
+    client.query("SELECT 'option', SUM('amount') AS total_amount from colordice_matches WHERE id ="+matchId+"GROUP BY 'option' ORDER BY total_amount ASC LIMIT 1")
+        .then((result) =>
+        {
+            winNum = result.rows[0];
 
-    client.query("UPDATE colordice_matches SET winNum = "+winNum+" WHERE id ="+matchId)
-          .then((result) =>
-          {
-              client.query("SELECT * FROM colordice_bet_history WHERE match_id ="+matchId)
-                    .then((result2) =>
+            client.query("UPDATE colordice_matches SET winNum = "+winNum+" WHERE id ="+matchId)
+            .then((result2) =>
+            {
+                client.query("SELECT * FROM colordice_bet_history WHERE match_id ="+matchId)
+                .then((result3) =>
+                {
+                    var totalBet = 0;
+                    var totalWin = 0;
+
+                    for(var i = 0; i < result3.rows.length; i++)
                     {
-                        var totalBet = 0;
-                        var totalWin = 0;
+                        totalBet += result3.rows[i].amount;
 
-                        for(var i = 0; i < result2.rows.length; i++)
+                        if(result2.rows[i].option == winNum)
                         {
-                            totalBet += result2.rows[i].amount;
+                            totalWin += result3.rows[i].amount;
+                        }
+                    }
 
-                            if(result.rows[i].option == winNum)
-                            {
-                                totalWin += result2.rows[i].amount;
-                            }
+                    client.query("UPDATE colordice_matches SET total_in = "+parseInt(totalBet)+", total_out = "+parseInt(totalWin)+" WHERE id ="+matchId)
+
+                    client.query("SELECT * FROM colordice_bet_history WHERE uid ="+allClient[i].uid)
+                    .then((result4) =>
+                    {
+                        if(result4.rows[0].option == winNum)
+                        {
+                            winAmount = (totalBet / totalWin) * result2.rows[0].amount;
                         }
 
-                        client.query("UPDATE colordice_matches SET total_in = "+parseInt(totalBet)+", total_out = "+parseInt(totalWin)+" WHERE id ="+matchId)
+                        var clientData = `{
+                            "type": "WinInfo",
+                            "sender": "Server",
+                            "matchId": "${matchId}",
+                            "winNum": "${winNum}",
+                            "winAmount": "${winAmount}"
+                        }`;
 
-                        for(var j = 0; j < result2.rows.length; j++)
-                        {
-                            var winAmount = 0;
-
-                            if(result2.rows[j].option == winNum)
-                            {
-                                winAmount = (totalBet / totalWin) * result2.rows[j].amount;
-                            }
-
-                            SendWinInfo(result2.rows[j].uid, matchId, winNum, winAmount);
-                            client.query("UPDATE colordice_bet_history SET winAmount = "+winAmount+" WHERE id ="+result2.rows[j].id)
-                        }
-
-                        setTimeout(function(){ 
-                            CreateMatch();
-                        }, 5000);
-
+                        allClient[i].send(clientData);
                     });
-          });
+                });
+            });
 
-}
-
-function SendWinInfo(uid, matchId, winNum, winAmount)
-{
-    for(var i = 0; i < allClient.length; i++)
-    {
-       if(allClient[i].id == uid)
-       {
-            var clientData = `{
-                "type": "WinInfo",
-                "sender": "Server",
-                "matchId": "${matchId}",
-                "winNum": "${winNum}",
-                "winAmount": "${winAmount}",
-            }`;
-        
-            allClient[i].send(clientData);
-            break;
-       }
-    }
+            setTimeout(function(){ 
+                EndMatch(result.rows[0].id);
+            }, 30000);
+        });
 }
 
 function SendRoadMap()
