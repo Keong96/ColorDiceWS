@@ -45,7 +45,7 @@ wss.on('connection', function connection(client){
             PlayerLogin(client, dataJSON.data);
             break;
         case "PlayerBet":
-            PlayerBet(dataJSON.sender, dataJSON.matchId, dataJson.amount, dataJSON.option);
+            PlayerBet(dataJSON.sender, dataJSON.matchId, dataJSON.amount, dataJSON.option);
             break;
       }
     });
@@ -105,7 +105,7 @@ function EndMatch(matchId)
                             }
                         }
 
-                        client.query("UPDATE colordice_matches SET totalIn = "+totalBet+", totalOut = "+totalWin+" WHERE id ="+matchId)
+                        client.query("UPDATE colordice_matches SET totalBet = "+parseInt(totalBet)+", totalWin = "+parseInt(totalWin)+" WHERE id ="+matchId)
 
                         for(var j = 0; j < result2.rows.length; j++)
                         {
