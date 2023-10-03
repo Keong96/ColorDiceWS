@@ -85,30 +85,39 @@ function CreateMatch()
 function EndMatch(matchId)
 {
     //decide the wining number
-    client.query("SELECT option AS option, SUM(amount) AS total_amount from colordice_bet_history WHERE match_id ="+matchId+" GROUP BY option ORDER BY total_amount ASC")
+    client.query("SELECT * from colordice_bet_history WHERE match_id ="+matchId)
     .then((result) =>
     {
         var winNum = -1;
         var totalBet = 0;
-        var betResult = [];
+        var option = [0, 0, 0, 0, 0, 0];
 
         for(i = 0; i < result.rows.length; i++)
         {
             totalBet += result.rows[i].total_amount;
+
+            option[result.rows[i].option] += result.rows[i].amount;
         }
 
-        betResult.sort((a, b) => a - b);
-        console.log("totalBet = "+totalBet);
-        console.log("result.rows[0] = "+JSON.stringify(result.rows[0]));
-
-        if(betResult[0] < totalBet / 10)
+        const diceResult = option.reduce((acc, current, index) => {
+        if (current < acc.min) {
+            return { min: current, index };
+        }
+            return acc;
+        }, { min: option[0], index: 0 });
+        
+        if(option[diceResult.index] < totalBet / 10 )
         {
             winNum = 6;
         }
         else
         {
-            winNum = result.rows[0].option;
+            winNum = diceResult.index;
         }
+
+        console.log("winNum = "+winNum);
+        console.log("totalBet = "+totalBet);
+        console.log("diceResult = "+diceResult.min);
 
         client.query("UPDATE colordice_matches SET winNum = "+winNum+" WHERE id ="+matchId)
 
