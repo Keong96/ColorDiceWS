@@ -142,7 +142,7 @@ function EndMatch(matchId)
     });
 }
 
-function SendWinAmount()
+function SendWinAmount(matchId)
 {
     var totalBet = 0;
 
