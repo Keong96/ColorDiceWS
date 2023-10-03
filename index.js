@@ -98,7 +98,7 @@ function EndMatch(matchId)
         }
 
         betResult.sort((a, b) => a - b);
-        Console.log("totalBet = "+totalBet);
+        console.log("totalBet = "+totalBet);
         console.log("result.rows[0] = "+JSON.stringify(result.rows[0]));
 
         if(betResult[0] < totalBet / 10)
