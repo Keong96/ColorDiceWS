@@ -115,10 +115,6 @@ function EndMatch(matchId)
             winNum = diceResult.index;
         }
 
-        console.log("winNum = "+winNum);
-        console.log("totalBet = "+totalBet);
-        console.log("diceResult = "+diceResult.min);
-
         client.query("UPDATE colordice_matches SET winNum = "+winNum+" WHERE id ="+matchId)
 
         for(var i = 0; i < allClient.length; i++)
@@ -133,8 +129,6 @@ function EndMatch(matchId)
             allClient[i].send(clientData);
             SendWinAmount(allClient[i].uid);
         }
-
-        console.log("EndMatch");
 
         setTimeout(function(){ 
             CreateMatch();
@@ -173,8 +167,6 @@ function SendWinAmount(matchId)
                 }
             });
     });
-
-    console.log("SendWinAmount");
 }
 
 function SendRoadMap()
