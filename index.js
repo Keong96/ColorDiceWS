@@ -204,5 +204,27 @@ function PlayerLogin(client, uid)
 
 function PlayerBet(sender, matchId, amount, option)
 {
-  client.query("INSERT INTO colordice_bet_history (uid, match_id, amount, option) VALUES ("+sender+", "+matchId+", "+amount+", "+option+")");
+    var secretKey = "***!@#!**huas998kaS9*Y*&Y";
+                var process = "debitmini";
+                var username = "test002";
+                var ref = matchId +" - "+sender+" - "+option; // M004
+                var amt = amount.toString();
+                
+                var i =  crypto.createHash('md5').update((process + username + ref + amount +secretKey).toString()).digest("hex");
+
+                var url = "https://api.globalaffiliate.vip/process.aspx?process="+process+"&username="+username+"&ref="+ref+"&amt="+amt+"&i="+i;
+
+                axios.get(url, {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        }
+                    })
+                    .then(response => {
+                        client.query("INSERT INTO colordice_bet_history (uid, match_id, amount, option) VALUES ("+sender+", "+matchId+", "+amount+", "+option+")");
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+
+    
 }
